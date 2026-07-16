@@ -1,4 +1,4 @@
-# HESS FortiGate Config 批次生成工具 v0.9
+# HESS FortiGate Config 批次生成工具 v0.9.1
 
 ## 1. 專案目的
 
@@ -34,7 +34,7 @@ pip install streamlit pandas openpyxl
 啟動：
 
 ```bash
-streamlit run HESS_CONFIG_FACTORY_v0.9.py
+streamlit run HESS_CONFIG_FACTORY_v0.9.1.py
 ```
 
 ---
@@ -152,23 +152,36 @@ HESS3803
 
 規則：
 
-| Excel 原始內容 | 處理結果 |
+| Excel 原始內容 | 實際替換值 |
 |---|---|
-| `HN78211899` | 使用 `HN78211899` |
-| `hn78211899` | 正規化為 `HN78211899` |
-| `78211899` | 自動補成 `HN78211899` |
+| `HN78211899` | `78211899` |
+| `hn78211899` | `78211899` |
+| `78211899` | `78211899` |
 | 空白 | 視為無 HN |
 | `xxxxxxxx` | 視為無 HN |
 | 其他非 HN、非純數字格式 | 視為無 HN |
 
-有 HN 時：
+`HN_NUMBER` 預留字串只替換成客戶號碼的純數字部分，不保留也不補上 `HN` 前綴。
+
+例如 Excel 客戶號碼為：
+
+```text
+HN78211899
+```
+
+Config：
 
 ```text
 set username "HN_NUMBER@ip.hinet.net"
 set username "HN_NUMBER@hinet.net"
 ```
 
-會替換為實際帳號。
+替換後為：
+
+```text
+set username "78211899@ip.hinet.net"
+set username "78211899@hinet.net"
+```
 
 無 HN 時：
 
@@ -466,8 +479,8 @@ HN：缺失，Config 保留 HN_NUMBER
 GitHub 建議至少包含：
 
 ```text
-HESS_CONFIG_FACTORY_v0.9.py
-REQUIREMENTS_v0.9.md
+HESS_CONFIG_FACTORY_v0.9.1.py
+REQUIREMENTS_v0.9.1.md
 requirements.txt
 ```
 
@@ -482,7 +495,7 @@ openpyxl
 部署至 Streamlit Community Cloud 時，Main file path 設為：
 
 ```text
-HESS_CONFIG_FACTORY_v0.9.py
+HESS_CONFIG_FACTORY_v0.9.1.py
 ```
 
 Config 範本與 Excel 由使用者在網頁上傳，不需要提交實際客戶資料至公開 GitHub Repository。

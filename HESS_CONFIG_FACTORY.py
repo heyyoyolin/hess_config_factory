@@ -9,7 +9,7 @@ import pandas as pd
 import streamlit as st
 
 
-APP_VERSION = "v0.9"
+APP_VERSION = "v0.9.1"
 SHEET_NAME = "總表"
 
 REQUIRED_COLUMNS = [
@@ -94,10 +94,15 @@ def normalize_site_id(value):
 def normalize_hn_number(value):
     """
     客戶號碼規則：
-    1. HN + 純數字：直接使用並統一為大寫。
-    2. 純數字：自動補 HN。
+    1. HN + 純數字：移除 HN，只保留數字部分。
+    2. 純數字：直接使用數字部分。
     3. 空白、xxxxxxxx 或其他格式：視為無 HN 帳號。
        Config 仍產出，但保留 HN_NUMBER，檔名加 _noHN。
+
+    範例：
+    - HN78211899 -> 78211899
+    - hn78211899 -> 78211899
+    - 78211899   -> 78211899
     """
     if is_blank(value):
         return None
@@ -105,10 +110,10 @@ def normalize_hn_number(value):
     raw = str(value).strip().upper().replace(" ", "")
 
     if re.fullmatch(r"HN\d+", raw):
-        return raw
+        return raw[2:]
 
     if re.fullmatch(r"\d+", raw):
-        return f"HN{raw}"
+        return raw
 
     return None
 
@@ -416,7 +421,7 @@ def build_summary(
     if success_items:
         for item in success_items:
             hn_status = (
-                f"HN：{item['hn_number']}"
+                f"客戶號碼：{item['hn_number']}"
                 if item["hn_number"]
                 else "HN：缺失，Config 保留 HN_NUMBER"
             )
